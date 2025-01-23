@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: knote
+spec:
+  replicas: {{ .Values.knote.replicas }}
+  selector:
+    matchLabels:
+      app: knote
+  template:
+    metadata:
+      labels:
+        app: knote
+    spec:
+      containers:
+        - name: knote
+          image: "{{ .Values.knote.image.repository }}:{{ .Values.knote.image.tag }}"
+          imagePullPolicy: {{ .Values.knote.image.pullPolicy }}
+          resources:
+            limits:
+              cpu: {{ .Values.knote.resources.limits.cpu }}
+              memory: {{ .Values.knote.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.knote.resources.requests.cpu }}
+              memory: {{ .Values.knote.resources.requests.memory }}
+          ports:
+            - containerPort: {{ .Values.knote.service.targetPort }}
+          env:
+          {{- range $key, $value := .Values.knote.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+          {{- end }}

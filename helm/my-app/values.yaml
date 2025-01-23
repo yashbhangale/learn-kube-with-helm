@@ -1,0 +1,45 @@
+knote:
+  replicas: 1
+  image:
+    repository: learnk8s/knote-js
+    tag: "2.0.0"
+    pullPolicy: Always
+  service:
+    type: LoadBalancer
+    port: 80
+    targetPort: 3000
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "128Mi"
+    requests:
+      cpu: "200m"
+      memory: "64Mi"
+  env:
+    MONGO_URL: mongodb://mongo:27017/dev
+    MINIO_ACCESS_KEY: mykey
+    MINIO_SECRET_KEY: mysecret
+    MINIO_HOST: minio
+
+minio:
+  replicas: 1
+  image:
+    repository: minio/minio
+    tag: RELEASE.2022-10-29T06-21-33Z
+  service:
+    port: 9000
+  pvc:
+    size: 256Mi
+  env:
+    MINIO_ACCESS_KEY: mykey
+    MINIO_SECRET_KEY: mysecret
+
+mongo:
+  replicas: 1
+  image:
+    repository: mongo
+    tag: "6.0.2-focal"
+  service:
+    port: 27017
+  pvc:
+    size: 256Mi
